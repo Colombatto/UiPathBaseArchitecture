@@ -8,7 +8,7 @@ This project provide a [CDK](https://docs.aws.amazon.com/cdk/latest/guide/home.h
 
 No. This project provide a good quickstart to use UiPath on AWS, but you need to change it to your needs before using UiPath on AWS.
 
-"Change" meaning: provide UiPath software+licence, use your EC2 keypair, set the correct TCP ports, check your desired hardware and software requirements, ...
+"Change" meaning for example: provide UiPath software+licence, use your EC2 keypair, set the correct TCP ports, check your desired hardware and software requirements and check if you prefer a different architecture (maybe you prefer an hybrid architecture where UiPath studio is installed on-premises)
 
 Regarding UiPath servers, you may want (and I would recommend) that you prepare an image of your UiPath server, so that you can create them automatically and to be sure they're identical (no undocumented late night changes to fix an issue).
 
