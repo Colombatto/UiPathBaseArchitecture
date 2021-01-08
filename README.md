@@ -44,7 +44,9 @@ Sure! Don't forget to add CDK Intellisense to your IDE! Here you have some refer
 
 ## Any known limitation or issues of this three tier architecture ?
 
-This configuration allows studio instances to connect directly to windows orchestrator instances (i.e. bypassing NLB), you may want to remove/change this configuration.
+This configuration allows studio instances to connect directly to windows orchestrator instances (i.e. bypassing NLB) in addition to use NLB, you may want to remove this option. I left this configuration because can be useful to test/debug communication between instances.
+
+I tested successfully this architecture in different AWS regions. The only known issue is that using this architecture with multi-az RDS in North Virginia will cause subnet issue.
 
 
 ## Useful commands
