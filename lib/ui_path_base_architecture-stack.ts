@@ -48,8 +48,8 @@ export class UiPathBaseArchitectureStack extends cdk.Stack {
           const winsub = prodvpc.selectSubnets({subnetGroupName: 'windows orchestrator'});
           const rdssub = prodvpc.selectSubnets({subnetGroupName: 'RDS SQL Server'});
 
-          const lbcidr = winsub.subnets[0].ipv4CidrBlock
-
+          const winsubcidr = winsub.subnets[0].ipv4CidrBlock
+          const stdsubcidr = stdsub.subnets[0].ipv4CidrBlock
 
           // e.g.: subnet-xxxxxxxxx
           //const haasubIds = haasub.subnetIds;
@@ -85,7 +85,7 @@ export class UiPathBaseArchitectureStack extends cdk.Stack {
           stdsg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80), 'allow http access from anyIpv4'); //add the ports you need
 
           //use this to connect to studio instances from internet, but restrict access to your ip
-          //stdsg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3389), 'allow rdp access from anyIpv4'); //add the ports you need
+          stdsg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3389), 'allow rdp access from anyIpv4'); //add the ports you need
 
           const stdasg = new autoscaling.AutoScalingGroup(this, 'Studio-ASG', {
             autoScalingGroupName: "Studio-ASG",
@@ -128,9 +128,11 @@ export class UiPathBaseArchitectureStack extends cdk.Stack {
             allowAllOutbound: true
           });
 
-          winsg.addIngressRule(ec2.Peer.ipv4(lbcidr), ec2.Port.tcp(80), 'allow http access from winsub cidr'); //add the ports you need
-          winsg.addIngressRule(stdsg, ec2.Port.tcp(80), 'allow http access from studio instances'); //add the ports you need
-          winsg.addIngressRule(stdsg, ec2.Port.tcp(3389), 'allow rdp access from studio instances'); //add the ports you need
+          //required to use NLB from studio instances
+          winsg.addIngressRule(ec2.Peer.ipv4(stdsubcidr), ec2.Port.tcp(80), 'allow http access from Studio cidr');
+
+          winsg.addIngressRule(stdsg, ec2.Port.tcp(80), 'allow DIRECT (no NLB) http access from studio instances'); //add the ports you need
+          winsg.addIngressRule(stdsg, ec2.Port.tcp(3389), 'allow DIRECT (no NLB) rdp access from studio instances'); //add the ports you need
 
 
           const winasg = new autoscaling.AutoScalingGroup(this, 'WinASG', {
